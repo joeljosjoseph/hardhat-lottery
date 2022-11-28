@@ -1,8 +1,8 @@
-const { assert } = require("chai")
+const { assert, expect } = require("chai")
 const { network, getNamedAccounts, deployments, ethers } = require("hardhat")
 const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 
-developmentChains.includes(network.name)
+!developmentChains.includes(network.name)
     ? describe.skip
     : describe("Raffle Unit Tests", async function () {
           let raffle, vrfCoordinatorV2Mock
@@ -20,6 +20,14 @@ developmentChains.includes(network.name)
                   const interval = await raffle.getInterval()
                   assert.equal(raffleState.toString(), "0")
                   assert.equal(interval.toString(), networkConfig[chainId]["interval"])
+              })
+          })
+
+          describe("enterRaffle", async function () {
+              it("reverts if not enough ETH is provided", async function () {
+                  await expect(raffle.enterRaffle()).to.be.revertedWith(
+                      "Raffle__SendMoreToEnterRaffle"
+                  )
               })
           })
       })
