@@ -8,10 +8,10 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
-    let vrfCoordinatorV2Address, subscriptionId
+    let vrfCoordinatorV2Address, subscriptionId, vrfCoordinatorV2Mock
 
     if (developmentChains.includes(network.name)) {
-        const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+        vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
         vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address
         const transactionResponse = await vrfCoordinatorV2Mock.createSubscription()
         const transactionReceipt = await transactionResponse.wait(1)
@@ -31,19 +31,20 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     const interval = networkConfig[chainId]["interval"]
     const args = [
         vrfCoordinatorV2Address,
-        entranceFee,
-        gasLane,
         subscriptionId,
-        callbackGasLimit,
+        gasLane,
         interval,
+        entranceFee,
+        callbackGasLimit,
     ]
 
-    const raffle = deploy("Raffle", {
+    const raffle = await deploy("Raffle", {
         from: deployer,
         args: args,
         log: true,
         waitConfirmations: network.config.waitConfirmations || 1,
     })
+    await vrfCoordinatorV2Mock.addConsumer(subscriptionId, raffle.address)
 
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("Verifying.....")

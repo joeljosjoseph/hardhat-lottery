@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/joel/hh-learn/hardhat-lottery/contracts/raffle.sol": {
-      "lastModificationDate": 1669646053682,
+      "lastModificationDate": 1669646906582,
       "contentHash": "0551e0cecc1fd7ff94d829dd7e0ea319",
       "sourceName": "contracts/raffle.sol",
       "solcConfig": {
