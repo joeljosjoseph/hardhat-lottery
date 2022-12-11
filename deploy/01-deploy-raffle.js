@@ -44,7 +44,11 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         log: true,
         waitConfirmations: network.config.waitConfirmations || 1,
     })
-    await vrfCoordinatorV2Mock.addConsumer(subscriptionId, raffle.address)
+    // Ensure the Raffle contract is a valid consumer of the VRFCoordinatorV2Mock contract.
+    if (developmentChains.includes(network.name)) {
+        const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+        await vrfCoordinatorV2Mock.addConsumer(subscriptionId, raffle.address)
+    }
 
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("Verifying.....")

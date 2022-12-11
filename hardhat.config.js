@@ -26,6 +26,22 @@ module.exports = {
             accounts: [PRIVATE_KEY],
         },
     },
+    etherscan: {
+        // yarn hardhat verify --network <NETWORK> <CONTRACT_ADDRESS> <CONSTRUCTOR_PARAMETERS>
+        apiKey: {
+            goerli: ETHERSCAN_API_KEY,
+        },
+        customChains: [
+            {
+                network: "goerli",
+                chainId: 5,
+                urls: {
+                    apiURL: "https://api-goerli.etherscan.io/api",
+                    browserURL: "https://goerli.etherscan.io",
+                },
+            },
+        ],
+    },
     gasReporter: { enable: false, currency: "USD", outputFile: "gas-report.txt", noColors: true },
     solidity: "0.8.17",
     namedAccounts: {
@@ -37,6 +53,6 @@ module.exports = {
         },
     },
     mocha: {
-        timeOut: 300000, //200s
+        timeout: 500000, // 500 seconds max for running tests
     },
 }
